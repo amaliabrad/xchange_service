@@ -28,25 +28,32 @@ public class XchangeDataServiceImpl implements XchangeDataService {
 
     @Override
     public CurrencyRate fetchDailyRateForCurrency(String currency) {
-        CurrencyRate result = exchangeRates.getCurrencyRateList().stream()
-                .filter(c -> currency.equals(c.getCurrency()))
-                .findAny()
-                .orElse(null);
+        CurrencyRate result = null;
+        if (exchangeRates != null) {
+            result = exchangeRates.getCurrencyRateList().stream()
+                    .filter(c -> currency.equals(c.getCurrency()))
+                    .findAny()
+                    .orElse(null);
+        }
         return result;
+
     }
 
     @Override
     public CurrencyRate fetchRateForCurrencyAndTime(String currency, String time) {
         CurrencyRate result = null;
-        CurrencyRateTime rateTime = currencyRateTimeList.stream()
-                .filter(currencyRateTime -> time.equals(currencyRateTime.getTime()))
-                .findAny()
-                .orElse(null);
-        if (rateTime != null) {
-            result = rateTime.getCurrencyRateList().stream()
-                    .filter(c -> currency.equals(c.getCurrency()))
+        if (currencyRateTimeList != null) {
+
+            CurrencyRateTime rateTime = currencyRateTimeList.stream()
+                    .filter(currencyRateTime -> time.equals(currencyRateTime.getTime()))
                     .findAny()
                     .orElse(null);
+            if (rateTime != null) {
+                result = rateTime.getCurrencyRateList().stream()
+                        .filter(c -> currency.equals(c.getCurrency()))
+                        .findAny()
+                        .orElse(null);
+            }
         }
         return result;
     }

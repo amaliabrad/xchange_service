@@ -2,6 +2,8 @@ package com.xchange.service.services.business;
 
 import com.xchange.service.contracts.common.ECurrency;
 import com.xchange.service.contracts.dto.CurrencyRate;
+import com.xchange.service.exception.BadRequestException;
+import com.xchange.service.exception.ResourceNotFoundException;
 import com.xchange.service.services.data.XchangeDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.time.Duration;
 import java.time.LocalDate;
 
 import static java.time.temporal.ChronoUnit.DAYS;
@@ -27,20 +28,38 @@ public class XchangeServiceImpl implements XchangeService {
 
     @Override
     public CurrencyRate fetchDailyRateForCurrency(String currency) {
+        CurrencyRate currencyRate;
+
         if (validCurrency(currency)) {
-            return xchangeDataService.fetchDailyRateForCurrency(currency.toUpperCase());
+            currencyRate = xchangeDataService.fetchDailyRateForCurrency(currency.toUpperCase());
+        } else {
+            throw new BadRequestException("The currency is not valid. Please try again.");
         }
-        //TODO add exception handling
-        return null;
+
+        if (currencyRate == null) {
+            throw new ResourceNotFoundException("The requested currency exchange rate was not found. Please try again for a different date.");
+        }
+
+        LOGGER.info("Fetched exchange rate for {}", currencyRate.getCurrency());
+        return currencyRate;
     }
 
     @Override
     public CurrencyRate fetchRateForCurrencyAndTime(String currency, String time) {
+        CurrencyRate currencyRate;
+
         if (validCurrency(currency) && validTimeInterval(time)) {
-            return xchangeDataService.fetchRateForCurrencyAndTime(currency.toUpperCase(), time);
+            currencyRate = xchangeDataService.fetchRateForCurrencyAndTime(currency.toUpperCase(), time);
+        } else {
+            throw new BadRequestException("The currency or time interval is not valid. Please try again.");
         }
-        //TODO add exception handling
-        return null;
+
+        if (currencyRate == null) {
+            throw new ResourceNotFoundException("The requested currency exchange rate was not found. Please try again for a different date.");
+        }
+
+        LOGGER.info("Fetched exchange rate for {}", currencyRate.getCurrency());
+        return currencyRate;
     }
 
     /**
@@ -52,7 +71,7 @@ public class XchangeServiceImpl implements XchangeService {
     private boolean validTimeInterval(String time) {
         LocalDate requestTime = LocalDate.parse(time);
         if (requestTime == null) {
-            //TODO exception invalid date
+            throw new BadRequestException("The time format is not valid. Please try again.");
         }
         LocalDate now = LocalDate.now();
         long daysBetween = DAYS.between(requestTime, now);

@@ -1,6 +1,7 @@
 package com.xchange.service.api;
 
 import com.xchange.service.contracts.dto.CurrencyRate;
+import com.xchange.service.exception.ResourceNotFoundException;
 import com.xchange.service.services.business.XchangeService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
@@ -40,13 +41,13 @@ public class Converter {
                                                 @DateTimeFormat(pattern = "yyyy-MM-dd") String date) {
         LOGGER.info("Request to Exchange CurrencyRate Service!");
 
-        CurrencyRate currencyRate = null;
+        CurrencyRate currencyRate;
+
         if (date == null) {
             currencyRate = xchangeService.fetchDailyRateForCurrency(currency);
         } else {
             currencyRate = xchangeService.fetchRateForCurrencyAndTime(currency, date);
         }
-        //TODO add exception handling
-        return new ResponseEntity<CurrencyRate>(currencyRate, OK);
+        return new ResponseEntity<>(currencyRate, OK);
     }
 }
