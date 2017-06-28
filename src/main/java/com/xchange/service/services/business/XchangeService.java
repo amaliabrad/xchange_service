@@ -6,10 +6,6 @@ import com.xchange.service.contracts.dto.CurrencyRate;
  * Created by Amalia Brad.
  */
 public interface XchangeService {
-    /**
-     * Fetch daily exchange rates from ECB.
-     */
-    void fetchDailyRates();
 
     /**
      * Fetch daily exchange rates from ECB for a currency.
@@ -18,4 +14,12 @@ public interface XchangeService {
      * @return the rate of exchange for te current date
      */
     CurrencyRate fetchDailyRateForCurrency(String currency);
+
+    /**
+     * Fetch exchange rate from ECB for a currency on a given date.
+     * @param currency the currency we want to see the exchange rate for
+     * @param time the requested time
+     * @return the rate of exchange for the given date
+     */
+    CurrencyRate fetchRateForCurrencyAndTime(String currency, String time);
 }

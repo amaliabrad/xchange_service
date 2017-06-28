@@ -12,9 +12,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by Amalia Brad.
@@ -22,32 +24,34 @@ import java.io.IOException;
 @Service
 public class XchangeServiceImpl implements XchangeService {
     private static final Logger LOGGER = LoggerFactory.getLogger(XchangeServiceImpl.class);
-    private static final String URL = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
 
     @Autowired
     XchangeDataService xchangeDataService;
 
     @Override
-    public void fetchDailyRates() {
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> result = restTemplate.getForEntity(URL, String.class);
-        String json = XML.toJSONObject(result.getBody()).toString();
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode node = mapper.readTree(json);
-            JsonNode arrayNode = node.get("gesmes:Envelope").get("Cube").get("Cube");
-            CurrencyRateTime currencyRateTime = mapper.readValue(arrayNode.toString(), new TypeReference<CurrencyRateTime>() {
-            });
-            xchangeDataService.updateDailyRates(currencyRateTime);
-        } catch (IOException e) {
-            //TODO add exception handling
-            e.printStackTrace();
+    public CurrencyRate fetchDailyRateForCurrency(String currency) {
+        if (!StringUtils.isEmpty(currency) && validCurrency(currency)) {
+            return xchangeDataService.fetchDailyRateForCurrency(currency);
         }
+        //TODO add exception handling
+        return null;
     }
 
     @Override
-    public CurrencyRate fetchDailyRateForCurrency(String currency) {
-        return xchangeDataService.fetchDailyRateForCurrency(currency);
+    public CurrencyRate fetchRateForCurrencyAndTime(String currency, String time) {
+        if (!StringUtils.isEmpty(currency) && validCurrency(currency) && validTimeInterval(time)) {
+            return xchangeDataService.fetchRateForCurrencyAndTime(currency, time);
+        }
+        //TODO add exception handling
+        return null;
+    }
+
+    private boolean validTimeInterval(String time) {
+        return true;
+    }
+
+    private boolean validCurrency(String currency) {
+        return true;
     }
 
 }

@@ -1,6 +1,7 @@
 package com.xchange.service.scheduler;
 
 import com.xchange.service.services.business.XchangeService;
+import com.xchange.service.services.endpoint.EcbClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +17,15 @@ public class UpdateRates {
     private static final Logger LOGGER = LoggerFactory.getLogger(UpdateRates.class);
 
     @Autowired
-    private XchangeService xchangeService;
+    private EcbClient ecbClient;
 
     /**
      * Schedule update of daily exchange rates every 40 minutes.
      */
     @Scheduled(fixedRate = 2400000)
     public void updateExchangeDailyRates() {
-        xchangeService.fetchDailyRates();
+        ecbClient.fetchDailyRates();
+        ecbClient.fetchAllRates();
         LOGGER.info("Update of daily exchange rates done.");
     }
 }

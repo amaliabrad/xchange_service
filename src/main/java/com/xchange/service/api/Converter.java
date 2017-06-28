@@ -11,8 +11,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-
 import static org.springframework.http.HttpStatus.OK;
 
 /**
@@ -37,15 +35,16 @@ public class Converter {
             @ApiResponse(code = 404, message = "NOT FOUND")})
     @RequestMapping(value = "/{currency}/convert", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<?> fetchExchangeRates(@PathVariable(value = "currency") String currency,
-                                                @ApiParam(value = "Date in yyyy-MM-dd format.")
+                                                @ApiParam(value = "Date with yyyy-MM-dd format")
                                                 @RequestParam(value = "date", required = false)
-                                                @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
+                                                @DateTimeFormat(pattern = "yyyy-MM-dd") String date) {
         LOGGER.info("Request to Exchange CurrencyRate Service!");
 
-        //TODO validate currency, validate date
         CurrencyRate currencyRate = null;
-        if (date == null && currency != null) {
+        if (date == null) {
             currencyRate = xchangeService.fetchDailyRateForCurrency(currency);
+        } else {
+            currencyRate = xchangeService.fetchRateForCurrencyAndTime(currency, date);
         }
         //TODO add exception handling
         return new ResponseEntity<CurrencyRate>(currencyRate, OK);
