@@ -1,7 +1,6 @@
 package com.xchange.service.api;
 
 import com.xchange.service.contracts.dto.CurrencyRate;
-import com.xchange.service.exception.ResourceNotFoundException;
 import com.xchange.service.services.business.XchangeService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
@@ -20,7 +19,7 @@ import static org.springframework.http.HttpStatus.OK;
  */
 @RestController
 @RequestMapping("")
-@Api(value = "Converter", description = "Exchange currency", produces = MediaType
+@Api(value = "Converter", description = "Exchange currency rate", produces = MediaType
         .APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class Converter {
 
@@ -30,8 +29,7 @@ public class Converter {
     XchangeService xchangeService;
 
     @ApiOperation(value = "Converter")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "SUCCESS"),
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "SUCCESS"),
             @ApiResponse(code = 400, message = "BAD REQUEST"),
             @ApiResponse(code = 404, message = "NOT FOUND")})
     @RequestMapping(value = "/{currency}/convert", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

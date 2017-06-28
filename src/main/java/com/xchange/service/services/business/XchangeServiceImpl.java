@@ -69,7 +69,12 @@ public class XchangeServiceImpl implements XchangeService {
      * @return true if it is valid, false otherwise
      */
     private boolean validTimeInterval(String time) {
-        LocalDate requestTime = LocalDate.parse(time);
+        LocalDate requestTime = null;
+        try {
+            requestTime = LocalDate.parse(time);
+        } catch (Exception e) {
+            throw new BadRequestException("The time format is not valid. Please try again.");
+        }
         if (requestTime == null) {
             throw new BadRequestException("The time format is not valid. Please try again.");
         }
