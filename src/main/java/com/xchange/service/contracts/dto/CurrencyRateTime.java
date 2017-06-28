@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import java.util.List;
 
 /**
+ * Dto holding information about the currency exchange rate history.
  * Created by Amalia Brad.
  */
 public class CurrencyRateTime {

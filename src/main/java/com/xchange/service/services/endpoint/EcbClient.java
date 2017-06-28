@@ -1,6 +1,7 @@
 package com.xchange.service.services.endpoint;
 
 /**
+ * Service used for consuming ECB REST API calls.
  * Created by Amalia Brad.
  */
 public interface EcbClient {

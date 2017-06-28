@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
+ * Service implementation class used for consuming ECB REST API calls.
  * Created by Amalia Brad.
  */
 @Service

@@ -4,9 +4,8 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
-import java.math.BigDecimal;
-
 /**
+ * Dto holding information about the currency exchange rate.
  * Created by Amalia Brad.
  */
 

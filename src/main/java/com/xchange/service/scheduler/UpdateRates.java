@@ -1,6 +1,5 @@
 package com.xchange.service.scheduler;
 
-import com.xchange.service.services.business.XchangeService;
 import com.xchange.service.services.endpoint.EcbClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

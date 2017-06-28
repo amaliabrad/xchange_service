@@ -1,24 +1,21 @@
 package com.xchange.service.services.business;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xchange.service.contracts.common.ECurrency;
 import com.xchange.service.contracts.dto.CurrencyRate;
-import com.xchange.service.contracts.dto.CurrencyRateTime;
 import com.xchange.service.services.data.XchangeDataService;
-import org.json.XML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
-import java.util.List;
+import java.time.Duration;
+import java.time.LocalDate;
+
+import static java.time.temporal.ChronoUnit.DAYS;
 
 /**
+ * Service class implementation for handling exchange rate related functionality.
  * Created by Amalia Brad.
  */
 @Service
@@ -30,8 +27,8 @@ public class XchangeServiceImpl implements XchangeService {
 
     @Override
     public CurrencyRate fetchDailyRateForCurrency(String currency) {
-        if (!StringUtils.isEmpty(currency) && validCurrency(currency)) {
-            return xchangeDataService.fetchDailyRateForCurrency(currency);
+        if (validCurrency(currency)) {
+            return xchangeDataService.fetchDailyRateForCurrency(currency.toUpperCase());
         }
         //TODO add exception handling
         return null;
@@ -39,19 +36,41 @@ public class XchangeServiceImpl implements XchangeService {
 
     @Override
     public CurrencyRate fetchRateForCurrencyAndTime(String currency, String time) {
-        if (!StringUtils.isEmpty(currency) && validCurrency(currency) && validTimeInterval(time)) {
-            return xchangeDataService.fetchRateForCurrencyAndTime(currency, time);
+        if (validCurrency(currency) && validTimeInterval(time)) {
+            return xchangeDataService.fetchRateForCurrencyAndTime(currency.toUpperCase(), time);
         }
         //TODO add exception handling
         return null;
     }
 
+    /**
+     * Validate that request time is valid, not older than 90 days.
+     *
+     * @param time the request time
+     * @return true if it is valid, false otherwise
+     */
     private boolean validTimeInterval(String time) {
-        return true;
+        LocalDate requestTime = LocalDate.parse(time);
+        if (requestTime == null) {
+            //TODO exception invalid date
+        }
+        LocalDate now = LocalDate.now();
+        long daysBetween = DAYS.between(requestTime, now);
+        return daysBetween <= 90;
     }
 
+    /**
+     * Validate currency from request.
+     *
+     * @param currency the currency to be validated
+     * @return true if it is valid, false otherwise
+     */
     private boolean validCurrency(String currency) {
-        return true;
+        if (StringUtils.isEmpty(currency)) {
+            return false;
+        }
+        ECurrency eCurrency = ECurrency.valueForType(currency.toUpperCase());
+        return (eCurrency != null);
     }
 
 }
